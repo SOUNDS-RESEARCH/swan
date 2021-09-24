@@ -1,6 +1,7 @@
 import pyaudio
 import socket
-import select
+# import select, selectors
+
 
 from settings import (
     FORMAT, CHANNELS, RATE, CHUNK, ADDRESS, PORT,
@@ -14,8 +15,9 @@ class MicrophoneSender:
         # Initialize network
         self.server_socket = socket.socket(SOCKET_ADDRESS_FAMILY, SOCKET_KIND)
         self.server_socket.bind((ADDRESS, PORT))
-        self.server_socket.listen(5)
-        self.read_list = [self.server_socket]
+        self.server_socket.listen()
+        #self.read_list = [self.server_socket]
+        self.client_sockets = []
 
         # Initialize microphone
         self.audio = pyaudio.PyAudio()
@@ -29,24 +31,35 @@ class MicrophoneSender:
         print("Recording...")
     
     def listen_and_send(self):
-        readable, writable, errored = select.select(self.read_list, [], [])
-        for s in readable:
-            if s is self.server_socket:
-                (clientsocket, address) = self.server_socket.accept()
-                self.read_list.append(clientsocket)
-                print("Connection from", address)
-            else:
-                data = s.recv(1024)
-                if not data:
-                    self.read_list.remove(s)
+        #readable, writable, errored = select.select(self.read_list, [], [])
+
+        client_socket, address = self.server_socket.accept()
+        #self.read_list.append(clientsocket)
+        print("Connection from", address)
+        self.client_sockets.append(client_socket)
+        
+        #     data = s.recv(1024)
+        #     if not data:
+        #         self.read_list.remove(s)
+        
+        # for s in readable:
+        #     if s is self.server_socket:
+        #         (clientsocket, address) = self.server_socket.accept()
+        #         self.read_list.append(clientsocket)
+        #         print("Connection from", address)
+        #     else:
+        #         data = s.recv(1024)
+        #         if not data:
+        #             self.read_list.remove(s)
         
     def callback(self, in_data, frame_count, time_info, status):
-        for s in self.read_list[1:]:
-            s.send(in_data)
+        # for s in self.read_list[1:]:
+        #     s.send(in_data)
+        for client in self.client_sockets: 
+            client.send(in_data)
         return (None, pyaudio.paContinue)
     
     def close(self):
-        
         self.server_socket.close()
         # stop Recording
         self.stream.stop_stream()
