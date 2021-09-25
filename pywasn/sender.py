@@ -35,7 +35,7 @@ class MicrophoneSender:
                                       input=True,
                                       frames_per_buffer=CHUNK,
                                       stream_callback=self.send_new_audio_frame_to_clients)
-        
+
         print("Recording...")
     
     def add_client(self):
