@@ -7,18 +7,18 @@ import argparse
 import pyaudio
 import socket
 
+from socket_utils import get_ip
 from settings import (
     FORMAT, CHANNELS, RATE, CHUNK, PORT,
     SOCKET_ADDRESS_FAMILY, SOCKET_KIND
 )
 
 
-class MicrophoneReceiver:
+class MicrophoneClientReceiver:
     def __init__(self, sender_address=None):
         # Initialize network
         if not sender_address:
-            hostname = socket.gethostname()
-            sender_address = socket.gethostbyname(hostname)
+            sender_address = get_ip()
         self.receiver_socket = socket.socket(SOCKET_ADDRESS_FAMILY, SOCKET_KIND)
         self.receiver_socket.connect((sender_address, int(PORT)))
         
@@ -36,9 +36,10 @@ class MicrophoneReceiver:
 
     def callback(self, data):
         "Edit this function to your needs. Currently plays received audio"
+
         self.playback_stream.write(data)
 
-    def close(self):     
+    def close(self):
         print('Shutting down')
         self.receiver_socket.close()
         self.playback_stream.close()
@@ -46,7 +47,7 @@ class MicrophoneReceiver:
 
 
 def main(sender_address):
-    microphone_receiver = MicrophoneReceiver(sender_address)
+    microphone_receiver = MicrophoneClientReceiver(sender_address)
 
     while True:
         microphone_receiver.receive()
