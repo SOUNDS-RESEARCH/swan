@@ -1,0 +1,9 @@
+audio:
+  # Recording settings
+  format: pyaudio.paInt16
+  sample_size_in_bytes: 2 # This and FORMAT are coupled.
+  channels: 1
+  rate: 44100
+  chunk: 4096
+  database_filename: "recordings.db"
+  wav_filename: "recording.wav"

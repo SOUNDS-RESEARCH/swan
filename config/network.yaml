@@ -1,0 +1,5 @@
+network:
+  mqtt_broker_port: 1883
+  mqtt_broker_address: "localhost"
+  mqtt_broker_keepalive_in_secs: 60
+  topic: "topic/streams"

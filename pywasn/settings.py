@@ -1,11 +1,16 @@
 import pyaudio
-import socket
 
+# Recording settings
 FORMAT = pyaudio.paInt16
+SAMPLE_SIZE_IN_BYTES = 2 # This and FORMAT are coupled.
 CHANNELS = 1
 RATE = 44100
 CHUNK = 4096
-PORT = 4444
 
-SOCKET_ADDRESS_FAMILY = socket.AF_INET # IPv4
-SOCKET_KIND = socket.SOCK_STREAM # TCP
+MQTT_BROKER_PORT = 1883
+MQTT_BROKER_ADDRESS = "localhost"
+MQTT_BROKER_KEEPALIVE_IN_SECS = 60
+
+TOPIC = "topic/streams"
+DATABASE_FILENAME = "recordings.db"
+WAV_FILENAME = "recording.wav"
