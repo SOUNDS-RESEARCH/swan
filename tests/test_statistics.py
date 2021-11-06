@@ -1,5 +1,5 @@
 from pywasn.database import Database
-from pywasn.statistics import get_packet_stats
+from pywasn.utils.statistics import get_packet_stats
 
 
 TEST_DATABASE_PATH = "tests/fixtures/recordings.db"

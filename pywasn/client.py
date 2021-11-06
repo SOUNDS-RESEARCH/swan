@@ -5,16 +5,18 @@ from omegaconf.dictconfig import DictConfig
 from pywasn.subscriber import subscriber
 from pywasn.publisher import publisher
 
+
 def client(config: DictConfig):
     try:
-        subscriber_process = Process(target=subscriber, args=(config,))
-        publisher_process = Process(target=publisher, args=(config,))
+        processes = []
+        if config["is_publisher"]:
+            processes.append(Process(target=subscriber, args=(config,)))
+        if config["is_subscriber"]:
+            processes.append(Process(target=publisher, args=(config,)))
 
-        subscriber_process.start()
-        publisher_process.start()
+        [p.start() for p in processes]
+        [p.join() for p in processes]
 
-        subscriber_process.join()
-        publisher_process.join()
     except KeyboardInterrupt:
         print("Stopping client...")
 

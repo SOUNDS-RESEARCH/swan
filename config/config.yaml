@@ -1,3 +1,5 @@
 defaults:
   - audio
   - network
+is_publisher: true
+is_subscriber: false

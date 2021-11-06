@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Wireless Acoustic Sensor Networks (WASNs) consist of multiple devices which contain one or more microphones and are connected using a wireless medium such as WiFi.
+Wireless Acoustic Sensor Networks (WASNs) consist of multiple devices which share their microphone recordings using a wireless channel such as WiFi.
 Such devices may be notebooks, cell phones, voice assistants, hearing aids, etc. 
 
 The goal of transmitting acoustic information over a network is to create network-connected microphone arrays, which allows for tasks such as source localization and beamforming to be performed. 

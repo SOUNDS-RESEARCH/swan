@@ -3,6 +3,7 @@ import sqlite3
 
 from pywasn.utils.audio import frames_to_wav
 from pywasn.utils.hydra import load_config
+from pywasn.utils.network import get_local_ip
 
 
 CREATE_QUERY = """
@@ -41,7 +42,7 @@ class Database:
     def get_signals(self, sender_ip=None):
         if sender_ip is None:
             # Default: save local signal
-            sender_ip = _get_local_ip()
+            sender_ip = get_local_ip()
 
         entries = self.cur.execute(GET_QUERY, (sender_ip, ))
         return entries.fetchall()
@@ -51,7 +52,3 @@ class Database:
         frames = [entry[0] for entry in entries]
         
         frames_to_wav(frames, self.config["audio"], output_file_path)
-
-
-def _get_local_ip():
-    return socket.gethostbyname(socket.gethostname())
