@@ -1,13 +1,14 @@
 import socket
 import sqlite3
 
-from pywasn.settings import DATABASE_FILENAME, CHUNK
-from pywasn.audio_utils import frames_to_wav
+from pywasn.utils.audio import frames_to_wav
+from pywasn.utils.hydra import load_config
 
 
-CREATE_QUERY = f"""
-    CREATE TABLE recordings
-    (data BINARY({CHUNK}), timestamp FLOAT, sender_ip VARCHAR)
+CREATE_QUERY = """
+    CREATE TABLE recordings (
+        data BLOB({}), timestamp FLOAT, sender_ip VARCHAR
+    )
 """
 
 INSERT_QUERY = """INSERT INTO recordings (data, timestamp, sender_ip)
@@ -17,12 +18,17 @@ GET_QUERY = """SELECT * FROM recordings WHERE sender_ip == ? """
 
 
 class Database:
-    def __init__(self, path=None):
+    def __init__(self, config=None, path=None):
+        if not config:
+            config = load_config()
+
+        self.config = config
+
         if path is None:
-            self.con = sqlite3.connect(DATABASE_FILENAME)
+            self.con = sqlite3.connect(config["audio"]["database_filename"])
             self.cur = self.con.cursor()
 
-            self.cur.execute(CREATE_QUERY)
+            self.cur.execute(CREATE_QUERY.format(config["audio"]["chunk"]))
             self.con.commit()
         else:
             self.con = sqlite3.connect(path)
@@ -44,7 +50,7 @@ class Database:
         entries = self.get_signals(sender_ip)
         frames = [entry[0] for entry in entries]
         
-        frames_to_wav(frames, output_file_path)
+        frames_to_wav(frames, self.config["audio"], output_file_path)
 
 
 def _get_local_ip():

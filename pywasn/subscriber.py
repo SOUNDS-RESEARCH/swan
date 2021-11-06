@@ -1,21 +1,17 @@
+from omegaconf.dictconfig import DictConfig
 import paho.mqtt.client as mqtt
 import pickle
 
 from pywasn.database import Database
-from pywasn.settings import (
-    MQTT_BROKER_ADDRESS, MQTT_BROKER_PORT, MQTT_BROKER_KEEPALIVE_IN_SECS,
-    WAV_FILENAME
-)
-from pywasn.settings import TOPIC
 
 
-def subscriber(): 
+def subscriber(config: DictConfig): 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        client.subscribe(TOPIC)
+        client.subscribe(config["network"]["topic"])
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
@@ -27,14 +23,14 @@ def subscriber():
         print(msg.topic, payload["timestamp"])
 
 
-    database = Database()
+    database = Database(config)
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
 
-    client.connect(MQTT_BROKER_ADDRESS,
-                   MQTT_BROKER_PORT,
-                   MQTT_BROKER_KEEPALIVE_IN_SECS)
+    client.connect(config["network"]["mqtt_broker_address"],
+                   config["network"]["mqtt_broker_port"],
+                   config["network"]["mqtt_broker_keepalive_in_secs"])
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
@@ -44,4 +40,4 @@ def subscriber():
         client.loop_forever()
     except KeyboardInterrupt:
         print("Stopping subscriber...")
-        database.to_wav(WAV_FILENAME)
+        database.to_wav(config["audio"]["wav_filename"])

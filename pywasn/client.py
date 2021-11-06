@@ -1,12 +1,14 @@
 from multiprocessing import Process
 
+from omegaconf.dictconfig import DictConfig
+
 from pywasn.subscriber import subscriber
 from pywasn.publisher import publisher
 
-def client():
+def client(config: DictConfig):
     try:
-        subscriber_process = Process(target=subscriber, args=())
-        publisher_process = Process(target=publisher, args=())
+        subscriber_process = Process(target=subscriber, args=(config,))
+        publisher_process = Process(target=publisher, args=(config,))
 
         subscriber_process.start()
         publisher_process.start()

@@ -6,11 +6,11 @@ TEST_DATABASE_PATH = "tests/fixtures/recordings.db"
 
 
 def test_get_packet_stats():
-    database = Database(TEST_DATABASE_PATH)
+    database = Database(path=TEST_DATABASE_PATH)
 
     entries = database.get_signals()
     
     avg_time_between_packets, std_time_between_packets = get_packet_stats(entries)
 
-    assert avg_time_between_packets == 0.09300661087036133
-    assert std_time_between_packets == 0.005686837660447592
+    assert avg_time_between_packets == 0.09289995691050654
+    assert std_time_between_packets == 0.006345857330628829

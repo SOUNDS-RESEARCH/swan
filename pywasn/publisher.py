@@ -1,22 +1,19 @@
 import pickle
+from omegaconf.dictconfig import DictConfig
 import pyaudio
 import paho.mqtt.client as mqtt
 import socket
 import time
 
-from pywasn.audio_utils import create_audio_recorder
-from pywasn.settings import (
-    MQTT_BROKER_ADDRESS, MQTT_BROKER_KEEPALIVE_IN_SECS, MQTT_BROKER_PORT,
-    TOPIC
-)
+from pywasn.utils.audio import create_audio_recorder
 
 
-def publisher():
+def publisher(config: DictConfig):
     client = mqtt.Client()
 
-    client.connect(MQTT_BROKER_ADDRESS,
-                   MQTT_BROKER_PORT,
-                   MQTT_BROKER_KEEPALIVE_IN_SECS)
+    client.connect(config["network"]["mqtt_broker_address"],
+                   config["network"]["mqtt_broker_port"],
+                   config["network"]["mqtt_broker_keepalive_in_secs"])
 
     def publish(in_data, frame_count, time_info, status):
         """This function is called every time a new audio frame is received.
@@ -28,11 +25,11 @@ def publisher():
             "sender_ip": _get_local_ip()
         }
 
-        client.publish(TOPIC, pickle.dumps(payload))
+        client.publish(config["network"]["topic"], pickle.dumps(payload))
 
         return (None, pyaudio.paContinue)
 
-    create_audio_recorder(publish)
+    create_audio_recorder(publish, config["audio"])
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
