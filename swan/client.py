@@ -2,8 +2,8 @@ from multiprocessing import Process
 
 from omegaconf.dictconfig import DictConfig
 
-from pywasn.subscriber import subscriber
-from pywasn.publisher import publisher
+from swan.subscriber import subscriber
+from swan.publisher import publisher
 
 
 def client(config: DictConfig):

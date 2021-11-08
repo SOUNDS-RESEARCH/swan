@@ -5,8 +5,8 @@ import time
 
 from omegaconf.dictconfig import DictConfig
 
-from pywasn.utils.audio import create_audio_recorder
-from pywasn.utils.network import get_local_ip
+from swan.utils.audio import create_audio_recorder
+from swan.utils.network import get_local_ip
 
 
 def publisher(config: DictConfig):

@@ -2,7 +2,7 @@ from omegaconf.dictconfig import DictConfig
 import paho.mqtt.client as mqtt
 import pickle
 
-from pywasn.database import Database
+from swan.database import Database
 
 
 def subscriber(config: DictConfig): 

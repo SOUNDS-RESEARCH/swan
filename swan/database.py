@@ -1,10 +1,10 @@
 import sqlite3
 import pandas as pd
 
-from pywasn.utils.audio import frames_to_wav
-from pywasn.utils.hydra import load_config
-from pywasn.utils.network import get_local_ip
-from pywasn.utils.statistics import get_packet_time_stats
+from swan.utils.audio import frames_to_wav
+from swan.utils.hydra import load_config
+from swan.utils.network import get_local_ip
+from swan.utils.statistics import get_packet_time_stats
 
 
 CREATE_QUERY = """

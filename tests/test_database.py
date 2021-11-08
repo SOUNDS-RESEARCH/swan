@@ -1,7 +1,7 @@
 import os
 import re
 
-from pywasn.database import Database
+from swan.database import Database
 
 TEST_DATABASE_PATH = "tests/fixtures/recordings.db"
 TEMP_WAV_OUTPUT_FILE = "tests/temp/recording.wav"
