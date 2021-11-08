@@ -3,9 +3,9 @@ import numpy as np
 from typing import List
 
 
-def get_packet_stats(packets: List[tuple]):
+def get_packet_time_stats(packets: List[tuple]):
     """Get the average and standard deviation
-        of the time between received recorded packets, in seconds.
+        of the time between received packets, in seconds.
 
 
     Args:
@@ -22,4 +22,4 @@ def get_packet_stats(packets: List[tuple]):
 
     times = np.array(times)
 
-    return times.mean(), times.std()
+    return times.mean(), times.std(), times.min(), times.max()

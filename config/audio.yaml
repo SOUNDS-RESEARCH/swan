@@ -6,4 +6,4 @@ audio:
   rate: 44100
   chunk: 4096
   database_filename: "recordings.db"
-  wav_filename: "recording.wav"
+  stats_filename: "stats.csv"

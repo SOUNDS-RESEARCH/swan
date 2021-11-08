@@ -1,4 +1,4 @@
-# pywasn : A Wireless Acoustic Sensor Network client for Python
+# SWAN : Simple Wireless Acoustic (Sensor) Network client for Python
 
 ## Introduction
 
@@ -7,16 +7,46 @@ Such devices may be notebooks, cell phones, voice assistants, hearing aids, etc.
 
 The goal of transmitting acoustic information over a network is to create network-connected microphone arrays, which allows for tasks such as source localization and beamforming to be performed. 
 
-The goal of this project is to provide a simple way for devices to share their microphone recordings over wireless networks. This is achieved using the Message Queue Telemetry Transport (MQTT) protocol, an established protocol for Internet-of-Things (IoT) applications. An important agent in MQTT is the message broker, a server which is responsible for transferring messages between devices. In WASN terminology, the message broker may be viewed as a fusion centre, although a distributed architecture is possible by instantiating one message broker in each connected device.
+The goal of this project is to provide a simple way for devices to share their microphone recordings over wireless networks. This is achieved using the Message Queue Telemetry Transport (MQTT) protocol, an established protocol for Internet-of-Things (IoT) applications. MQTT revolves around the message broker, a server responsible for transferring messages between devices. In WASN terminology, the message broker may be viewed as a fusion centre, although a distributed architecture is possible by instantiating one message broker in each connected device.
 
 A second key concept in the MQTT protocol is the publisher-subscriber paradigm. In MQTT, a message is not sent to a receiver directly. Instead, the *publisher* sends the message to the broker along with a "topic name". In turn, interested devices must *subscribe* to the aforementioned topic. Finally, the broker will take care of automatically relaying the messages to the interested parties.
 
 
 ## Installation
-1. Install the [Mosquitto](https://mosquitto.org/) MQTT message broker.
-2. Install the [paho](https://www.eclipse.org/paho/clients/python/) MQTT client for Python using `pip install paho-mqtt`
-3. Clone this repository 
+
+### Installing the client
+
+1. Clone this repository using `git clone https://github.com/egrinstein/swan.git`
+2. Enter the cloned directory using `cd swan`
+3. Install most of the required Python libraries using `pip install -r requirements.txt`
+4. Install the PyAudio library for your Python distribution
+    1. A quick way of seeing what your distribution is by typing `python` in your terminal
+    2. Download the .whl file corresponding to your distribution from [this](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio) website.
+    3. Install the PyAudio library by running `pip install path/to/pyaudio.whl`
+
+### Installing the server
+At least one of the devices in the network must be running an MQTT server/broker, which will receive and distribute the microphone signals from all devices. Installation steps for the [Mosquitto](https://mosquitto.org/) broker are detailed below:
+
+1. MQTT usually port 1883 for communicating. This port must be therefore opened. On Windows, this is achieved by creating an "Inbound Port Rule" and an "Outbound Port Rule" in the firewall settings. See [https://www.youtube.com/watch?v=IDMMzxDV4PQ&ab_channel=delightnet](video) for a quick walkthrough.
+2. Install the [Mosquitto](https://mosquitto.org/) MQTT message broker using the corresponding executable for your machine. 
+3. Mosquitto is initially configured not to allow external connections. Before starting the server, we must change this behaviour. In the directory where you installed Mosquitto (in Windows, it is usually C:\Program Files\mosquitto), add the following lines to the file `mosquitto.conf`:
+```
+listener 1883
+allow_anonymous true
+```
+4. Finally, you may install Mosquitto as a Windows service by executing `mosquitto install` from Mosquitto's installation directory.
 
 ## Usage
-1. Start a mosquitto server on one or more devices: On Windows, open Powershell as admin and execute `net start mosquitto` 
-2. Start the pywasn client
+### Server
+At least one of the machines in the network must host an MQTT server. In Windows, this may be achieved by opening a Powershell prompt as admin and executing `net start mosquitto`
+
+### Client
+1. Running `python main.py` will start a swan client which will send signals to the network as well as receive signals from other devices.
+* If connecting to a remote broker, run `python main.py network.broker_address=X.X.X.X` where `X.X.X.X` corresponds to the broker address you would like to connect to. Tip: use the commands `ipconfig` (Windows) and `ifconfig` (Linux) to see what is your IP.
+* If you want the device only to publish its signals, set the flag `subscribe=false`. Conversely, set the flag `publish=false` only to listen to the signals within the network.
+* To see all available options, run `python main.py --help`.
+2. To stop the client, use Ctrl+C. You will be able to see the recorded signals in the `outputs/` directory, as well as stats on the received signals.
+
+## Development
+
+Run the unit tests with `pytest tests/`

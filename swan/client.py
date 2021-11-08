@@ -9,9 +9,9 @@ from pywasn.publisher import publisher
 def client(config: DictConfig):
     try:
         processes = []
-        if config["is_publisher"]:
+        if config["subscribe"]:
             processes.append(Process(target=subscriber, args=(config,)))
-        if config["is_subscriber"]:
+        if config["publish"]:
             processes.append(Process(target=publisher, args=(config,)))
 
         [p.start() for p in processes]

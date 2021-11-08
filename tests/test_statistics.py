@@ -1,16 +1,17 @@
 from pywasn.database import Database
-from pywasn.utils.statistics import get_packet_stats
+from pywasn.utils.statistics import get_packet_time_stats
 
 
 TEST_DATABASE_PATH = "tests/fixtures/recordings.db"
 
 
-def test_get_packet_stats():
+def test_get_packet_time_stats():
     database = Database(path=TEST_DATABASE_PATH)
 
-    entries = database.get_signals()
+    entries = database.get_packets()
     
-    avg_time_between_packets, std_time_between_packets = get_packet_stats(entries)
-
-    assert avg_time_between_packets == 0.09289995691050654
-    assert std_time_between_packets == 0.006345857330628829
+    stats = get_packet_time_stats(entries)
+    assert stats == (0.09285523559873467, # Avg
+                     0.0053123145302723706, # Std
+                     0.08434772491455078, # Min
+                     0.10402798652648926) # Max
