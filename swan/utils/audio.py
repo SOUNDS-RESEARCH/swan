@@ -19,10 +19,10 @@ class AudioBuffer:
         # Create an empty buffer for the publisher
         if publisher_ip not in self.ring_buffers:
             self.ring_buffers[publisher_ip] = RingBuffer(capacity=self.buffer_size,
-                                                      dtype=np.byte)
-            self.ring_buffers[publisher_ip].extend(np.zeros(self.buffer_size, dtype=np.byte))
+                                                      dtype=np.int16)
+            self.ring_buffers[publisher_ip].extend(np.zeros(self.buffer_size, dtype=np.int16))
         
-        self.ring_buffers[publisher_ip].extend(np.frombuffer(data["frame"], dtype=np.byte))
+        self.ring_buffers[publisher_ip].extend(np.frombuffer(data["frame"], dtype=np.int16))
     
     def read(self):
         frames = {
@@ -49,7 +49,7 @@ def create_audio_recorder(stream_callback, audio_config):
         raise NotImplementedError("The only currently available sample size is 2")
 
     recorder.open(
-        format=format,
+        format=FORMAT,
         channels=audio_config["channels"],
         rate=audio_config["rate"],
         input=True,

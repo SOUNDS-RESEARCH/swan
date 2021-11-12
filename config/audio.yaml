@@ -2,9 +2,9 @@ audio:
   # Recording settings
   format: pyaudio.paInt16
   sample_size_in_bytes: 2
-  channels: 1
+  channels: 2
   rate: 44100
   frame_size_in_bytes: 4096 # Maybe this would be better represented in seconds
-  buffer_size_in_bytes: 40960 # Same as above
+  feature_buffer_size_in_bytes: 40960 # Same as above
   database_filename: "recordings.db"
   stats_filename: "stats.csv"

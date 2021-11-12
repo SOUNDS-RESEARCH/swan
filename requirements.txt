@@ -2,3 +2,4 @@ hydra-core
 numpy_ringbuffer
 paho-mqtt
 pandas
+scipy

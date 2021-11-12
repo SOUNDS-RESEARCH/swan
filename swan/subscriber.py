@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt
 import pickle
 
 from swan.database import Database
+from swan.feature_creator import FeatureCreator
 from swan.utils.audio import AudioBuffer
 
 
@@ -16,15 +17,17 @@ def subscriber(config: DictConfig):
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
         payload = pickle.loads(msg.payload)
-        database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
-        buffer.write(payload)
-        print(buffer.read())
-        # TODO: Compute features here, think of a better way to organize all that...
-        # TODO: Audio and buffer could be a single database.
-        # Also, perhaps make it two microphones per device? Maybe set one as 0 when the device only has one channel?
+        
+        features = feature_creator.update_features(payload)
+        print(features)
 
+        # TODO: Database becomes a "logger" module. 
+        database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
+        # TODO: Audio and buffer could be a single database.
+        
     database = Database(config)
-    buffer = AudioBuffer(config["audio"]["buffer_size_in_bytes"])
+    
+    feature_creator = FeatureCreator(config["audio"]["feature_buffer_size_in_bytes"])
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
