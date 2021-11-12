@@ -24,7 +24,7 @@ def publisher(config: DictConfig):
            It proceeds to send the frame to all clients connected to this node
         """
         payload = {
-            "data": in_data,
+            "frame": in_data,
             "timestamp": time.time(),
             "publisher_ip": get_local_ip()
         }

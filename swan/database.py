@@ -32,7 +32,7 @@ class Database:
             self.con = sqlite3.connect(config["audio"]["database_filename"])
             self.cur = self.con.cursor()
 
-            self.cur.execute(CREATE_QUERY.format(config["audio"]["chunk"]))
+            self.cur.execute(CREATE_QUERY.format(config["audio"]["frame_size_in_bytes"]))
             self.con.commit()
         else:
             self.con = sqlite3.connect(path)
