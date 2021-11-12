@@ -33,15 +33,18 @@ class FeatureCreator:
 
 def msc(x):
     """
-    Compute the Magnitude Square Coherence feature, defined as:
+    Compute the (Mean) Magnitude Square Coherence feature, defined as:
 
           |CSD(x1, x2)(f)|^2
     ------------------------------
     CSD(x1, x1)(f)*CSD(x2, x2)(f)'
 
-    Where CSD(x1, x2) is the cross spectral density between signals x1 and x2.
+    Averaged across all frequencies, where CSD(x1, x2) is the cross spectral density between signals x1 and x2.
 
     """
+
+    N_SAMPLES_TO_USE = 4096
+    x = x[-N_SAMPLES_TO_USE:]  
 
     f12, csd12 = csd(x[0], x[1])
     f11, csd11 = csd(x[0], x[0])
