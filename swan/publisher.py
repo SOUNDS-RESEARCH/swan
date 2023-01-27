@@ -18,6 +18,7 @@ def publisher(config: DictConfig):
                    config["network"]["broker_keepalive_in_secs"])
     
     print(f"Publishing microphone signals at {broker_address}...")
+    publisher_ip = get_local_ip()
 
     def publish(in_data, frame_count, time_info, status):
         """This function is called every time a new audio frame is received.
@@ -26,7 +27,7 @@ def publisher(config: DictConfig):
         payload = {
             "frame": in_data,
             "timestamp": time.time(),
-            "publisher_ip": get_local_ip()
+            "publisher_ip": publisher_ip
         }
 
         client.publish(
