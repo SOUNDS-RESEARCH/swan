@@ -1,10 +1,11 @@
-from omegaconf.dictconfig import DictConfig
 import paho.mqtt.client as mqtt
 import pickle
 
+from omegaconf.dictconfig import DictConfig
+
 from swan.database import Database
 from swan.feature_creator import FeatureCreator
-from swan.utils.audio import AudioBuffer
+from swan.plotter import MscPlotter
 
 
 def subscriber(config: DictConfig):
@@ -19,7 +20,8 @@ def subscriber(config: DictConfig):
         payload = pickle.loads(msg.payload)
         
         features = feature_creator.update_features(payload)
-        print(features)
+        
+        plotter.update(features)
 
         # TODO: Database becomes a "logger" module. 
         database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
@@ -28,9 +30,12 @@ def subscriber(config: DictConfig):
     database = Database(config)
     
     feature_creator = FeatureCreator(config["audio"]["feature_buffer_size_in_bytes"])
+    plotter = MscPlotter()
+
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
+
 
     broker_address = config["network"]["broker_address"]
     client.connect(broker_address,

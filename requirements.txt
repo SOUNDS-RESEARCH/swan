@@ -3,3 +3,4 @@ numpy_ringbuffer
 paho-mqtt
 pandas
 scipy
+matplotlib
