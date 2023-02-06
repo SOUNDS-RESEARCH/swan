@@ -47,7 +47,7 @@ class FeatureManager:
             # See https://stackoverflow.com/questions/24974032/reading-realtime-audio-data-into-numpy-array
 
             features = {}
-            features["num_channels"] = signal.shape[0]
+            # features["num_channels"] = signal.shape[0]
             features["rms"] = rms(signal)
             
             features_per_publisher[publisher_ip] = features
