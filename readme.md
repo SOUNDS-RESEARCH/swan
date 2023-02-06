@@ -50,3 +50,7 @@ At least one of the machines in the network must host an MQTT server. In Windows
 ## Development
 
 Run the unit tests with `pytest tests/`
+
+The diagram below describes the code's architecture:
+
+![Diagram](docs/diagram.png "Diagram")
