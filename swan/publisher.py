@@ -30,6 +30,13 @@ class Publisher:
         self.mqtt_client.connect(broker_address,
                                  config["network"]["broker_port"],
                                  config["network"]["broker_keepalive_in_secs"])
+        payload = {
+            "msg_type":"con",
+            "connect": True,
+            "timestamp": time.time(),
+            "publisher_ip": self.publisher_ip
+        }
+        self.mqtt_client.publish(self.config["network"]["topic"], pickle.dumps(payload))
         print(f"Publishing microphone signals at {broker_address}...")
 
         # 2. Create an audio recorder which calls the "publish" function
@@ -41,6 +48,13 @@ class Publisher:
         try:
             self.mqtt_client.loop_forever()
         except KeyboardInterrupt:
+            payload = {
+                "msg_type":"con",
+                "connect": False,
+                "timestamp": time.time(),
+                "publisher_ip": self.publisher_ip
+            }
+            self.mqtt_client.publish(self.config["network"]["topic"], pickle.dumps(payload))
             print("Stopping publisher...")
             
 
@@ -49,6 +63,7 @@ class Publisher:
         It proceeds to send the frame to all clients connected to this node
         """
         payload = {
+            "msg_type":"data",
             "frame": in_data,
             "timestamp": time.time(),
             "publisher_ip": self.publisher_ip

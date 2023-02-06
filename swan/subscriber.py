@@ -48,10 +48,10 @@ class Subscriber:
         except KeyboardInterrupt:
             print("Stopping subscriber...")
             # The commands below are not working...
-            self.database.to_wav()
-            stats = self.database.get_stats()
-            stats.to_csv(config["audio"]["stats_filename"])
-            print(stats)
+            # self.database.to_wav()
+            # stats = self.database.get_stats()
+            # stats.to_csv(config["audio"]["stats_filename"])
+            # print(stats)
 
     def on_connect(self, client, userdata, flags, rc):
         """The callback for when the client receives a CONNACK response from the server.
@@ -63,9 +63,10 @@ class Subscriber:
     def on_message(self, client, userdata, msg):
         "The callback for when a PUBLISH message is received from the server."
         payload = pickle.loads(msg.payload)
-        # print("message from "+payload["publisher_ip"])
-        features = self.feature_manager.update_features(payload)
-        
-        self.plotter.update(features)
-
-        self.database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
+        # print(payload["msg_type"])
+        if payload["msg_type"] == "con":
+            self.plotter.update_ips(payload["conn"], payload["publisher_ip"])
+        if payload["msg_type"] == "data":
+            features = self.feature_manager.update_features(payload)
+            self.plotter.update_data(features)
+            self.database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
