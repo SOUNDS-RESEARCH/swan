@@ -28,13 +28,14 @@ class Plotter:
             and the values are dicts with keys being the feature names and
             values being their respective feature values.
         """
-        for device_ip, features_ in features.items():
-            for feature_key, value in features_.items():
-                self.feature_data[feature_key][device_ip] = value
+        for device_ip in self.device_ips.keys():
+            for feature_key in self.feature_keys:
+                self.feature_data[feature_key][device_ip] = features[feature_key][device_ip]
 
         # self._update_rms(features)
         # Add new features plotting functions here.
         # You may use the _update_rms function as a template.
+        print(self.feature_data)
         if len(self.feature_keys) == 1:
             self.axs.clear()
             self.axs.bar(self.feature_data[feature_key].keys(), self.feature_data[self.feature_keys[0]].values())
@@ -56,3 +57,11 @@ class Plotter:
         #     for feature_key, value in features_.items():
         #         self.feature_data[feature_key][device_ip] = value
         pass
+
+    def update_ips(self, add, ip):
+        # print("pepe")
+        if add == True:
+            self.device_ips[ip] = True
+        else:
+            if ip in self.device_ips:
+                del self.device_ips[ip]
