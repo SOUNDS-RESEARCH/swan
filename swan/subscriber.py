@@ -63,7 +63,7 @@ class Subscriber:
     def on_message(self, client, userdata, msg):
         "The callback for when a PUBLISH message is received from the server."
         payload = pickle.loads(msg.payload)
-        
+        # print("message from "+payload["publisher_ip"])
         features = self.feature_manager.update_features(payload)
         
         self.plotter.update(features)

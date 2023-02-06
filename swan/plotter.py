@@ -6,7 +6,7 @@ matplotlib.use("TkAgg")
 
 class Plotter:
     def __init__(self):
-        self.feature_keys = ["msc", "vad"] # When adding new features, add their keys to this list
+        self.feature_keys = ["msc"] # When adding new features, add their keys to this list
 
         # Currently only creating one plot, which
         # will hold the MSC.
