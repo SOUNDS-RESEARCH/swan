@@ -40,7 +40,6 @@ class Plotter:
         # self._update_rms(features)
         # Add new features plotting functions here.
         # You may use the _update_rms function as a template.
-        print(self.feature_data)
         if len(self.feature_keys) == 1:
             self.axs.clear()
             self.axs.bar(self.feature_data[feature_key].keys(), self.feature_data[self.feature_keys[0]].values())
