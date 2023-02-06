@@ -28,7 +28,9 @@ class Plotter:
             and the values are dicts with keys being the feature names and
             values being their respective feature values.
         """
-        
+        for ip in features.keys():
+            if ip not in self.device_ips:
+                self.update_ips(True, ip)
         self._update_rms(features)
         # Add new features plotting functions here.
         # You may use the _update_rms function as a template.
@@ -60,6 +62,8 @@ class Plotter:
     def update_ips(self, add, ip):
         # print("pepe")
         if add == True:
-            self.device_ips[ip] = True
+            pass
+            # self.device_ips[ip] = True
         else:
-            del self.device_ips[ip]
+            if ip in self.device_ips:
+                del self.device_ips[ip]

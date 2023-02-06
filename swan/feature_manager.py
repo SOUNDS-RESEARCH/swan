@@ -88,6 +88,6 @@ def rms(x):
     """
     # Only use the last frame of data
     N_SAMPLES_TO_USE = 4096
-    x = x[-N_SAMPLES_TO_USE:]
+    x = x[-N_SAMPLES_TO_USE:].astype(np.float32)/32767.0
 
     return np.sqrt(np.square(x).sum())

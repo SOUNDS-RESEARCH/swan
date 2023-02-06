@@ -39,7 +39,7 @@ class Subscriber:
         self.client.connect(broker_address,
                     config["network"]["broker_port"],
                     config["network"]["broker_keepalive_in_secs"])
-        self.plotter.update_ips(True, config["network"]["broker_address"]) # add itself to ips, hackish
+        self.plotter.device_ips[config["network"]["broker_address"]] = True # add itself to ips, hackish
         print(f"Subscribed to receive microphone signals at {broker_address}...")
         
         # Blocking call that processes network traffic,
@@ -66,7 +66,7 @@ class Subscriber:
         payload = pickle.loads(msg.payload)
         # print(payload["msg_type"])
         if payload["msg_type"] == "con":
-            self.plotter.update_ips(payload["conn"], payload["publisher_ip"])
+            self.plotter.update_ips(payload["connect"], payload["publisher_ip"])
         if payload["msg_type"] == "data":
             features = self.feature_manager.update_features(payload)
             self.plotter.update_data(features)
