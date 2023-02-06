@@ -41,10 +41,10 @@ allow_anonymous true
 At least one of the machines in the network must host an MQTT server. In Windows, this may be achieved by opening a Powershell prompt as admin and executing `net start mosquitto`
 
 ### Client
-1. Running `python main.py` will start a swan client which will send signals to the network as well as receive signals from other devices.
-* If connecting to a remote broker, run `python main.py network.broker_address=X.X.X.X` where `X.X.X.X` corresponds to the broker address you would like to connect to. Tip: use the commands `ipconfig` (Windows) and `ifconfig` (Linux) to see what is your IP.
+1. Running `python client.py` will start a swan client which will send signals to the network as well as receive signals from other devices.
+* If connecting to a remote broker, run `python client.py network.broker_address=X.X.X.X` where `X.X.X.X` corresponds to the broker address you would like to connect to. Tip: use the commands `ipconfig` (Windows) and `ifconfig` (Linux) to see what is your IP.
 * If you want the device only to publish its signals, set the flag `subscribe=false`. Conversely, set the flag `publish=false` only to listen to the signals within the network.
-* To see all available options, run `python main.py --help`.
+* To see all available options, run `python client.py --help`.
 2. To stop the client, use Ctrl+C. You will be able to see the recorded signals in the `outputs/` directory, as well as stats on the received signals.
 
 ## Development

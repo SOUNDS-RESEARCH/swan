@@ -1,5 +1,12 @@
+import platform
+
 import socket
 
 
 def get_local_ip():
-    return socket.gethostbyname(socket.gethostname())
+    system = platform.system()
+
+    if system == "Windows":
+        return socket.gethostbyname(socket.gethostname())
+    else:
+        return socket.gethostbyname("0")

@@ -1,6 +1,6 @@
+import paho.mqtt.client as mqtt
 import pickle
 import pyaudio
-import paho.mqtt.client as mqtt
 import time
 
 from omegaconf.dictconfig import DictConfig
@@ -9,38 +9,54 @@ from swan.utils.audio import create_audio_recorder
 from swan.utils.network import get_local_ip
 
 
-def publisher(config: DictConfig):
-    broker_address = config["network"]["broker_address"]
-    client = mqtt.Client()
+class Publisher:
+    def __init__(self, config: DictConfig):
+        """This function abstracts the functionality
+        of a publisher. A publisher is connected to an
+        MQTT server as well as to the device's microphones.
+        
+        Args:
+            config (DictConfig): configuration of the publisher, such as the IP address of the MQTT
+            server to use. 
 
-    client.connect(broker_address,
-                   config["network"]["broker_port"],
-                   config["network"]["broker_keepalive_in_secs"])
-    
-    print(f"Publishing microphone signals at {broker_address}...")
-    publisher_ip = get_local_ip()
+        """
 
-    def publish(in_data, frame_count, time_info, status):
+        self.config = config
+        self.publisher_ip = get_local_ip()
+
+        # 1. Connect to a MQTT server to publish signals at
+        broker_address = config["network"]["broker_address"]
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.connect(broker_address,
+                                 config["network"]["broker_port"],
+                                 config["network"]["broker_keepalive_in_secs"])
+        print(f"Publishing microphone signals at {broker_address}...")
+
+        # 2. Create an audio recorder which calls the "publish" function
+        # every time a frame is received
+        create_audio_recorder(self.publish, config["audio"])
+
+        # 3. Blocking call that processes network traffic, dispatches callbacks and
+        # handles reconnecting.
+        try:
+            self.mqtt_client.loop_forever()
+        except KeyboardInterrupt:
+            print("Stopping publisher...")
+            
+
+    def publish(self, in_data, frame_count, time_info, status):
         """This function is called every time a new audio frame is received.
-           It proceeds to send the frame to all clients connected to this node
+        It proceeds to send the frame to all clients connected to this node
         """
         payload = {
             "frame": in_data,
             "timestamp": time.time(),
-            "publisher_ip": publisher_ip
+            "publisher_ip": self.publisher_ip
         }
 
-        client.publish(
-            config["network"]["topic"],
+        self.mqtt_client.publish(
+            self.config["network"]["topic"],
             pickle.dumps(payload)
         )
 
         return (None, pyaudio.paContinue)
-
-    create_audio_recorder(publish, config["audio"])
-    # Blocking call that processes network traffic, dispatches callbacks and
-    # handles reconnecting.
-    try:
-        client.loop_forever()
-    except KeyboardInterrupt:
-        print("Stopping publisher...")
