@@ -39,6 +39,7 @@ class Subscriber:
         self.client.connect(broker_address,
                     config["network"]["broker_port"],
                     config["network"]["broker_keepalive_in_secs"])
+        self.plotter.update_ips(True, config["network"]["broker_address"]) # add itself to ips, hackish
         print(f"Subscribed to receive microphone signals at {broker_address}...")
         
         # Blocking call that processes network traffic,
@@ -57,7 +58,7 @@ class Subscriber:
         """The callback for when the client receives a CONNACK response from the server.
             Subscribing in on_connect() means that if we lose the connection and
             reconnect then subscriptions will be renewed."""
-
+        
         client.subscribe(self.config["network"]["topic"])
     
     def on_message(self, client, userdata, msg):

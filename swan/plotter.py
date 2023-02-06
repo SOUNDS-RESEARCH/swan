@@ -32,13 +32,17 @@ class Plotter:
         self._update_rms(features)
         # Add new features plotting functions here.
         # You may use the _update_rms function as a template.
+        if len(self.device_ips) == 0:
+            return
         if len(self.feature_keys) == 1:
             self.axs.clear()
-            self.axs.bar(self.device_ips, self.feature_data[feature_key].values())
+            # print(self.device_ips)
+            # print(self.feature_data[self.feature_keys[0]].values())
+            self.axs.bar(self.device_ips.keys(), self.feature_data[self.feature_keys[0]].values())
         else:
             for id, feature_key in enumerate(self.feature_keys):
                 self.axs[id].clear()
-                self.axs[id].bar(self.device_ips, self.feature_data[feature_key].values())
+                self.axs[id].bar(self.device_ips.keys(), self.feature_data[feature_key].values())
 
         self.fig.canvas.draw()
         # This will run the GUI event
@@ -54,6 +58,7 @@ class Plotter:
                 self.feature_data[feature_key][device_ip] = value
 
     def update_ips(self, add, ip):
+        # print("pepe")
         if add == True:
             self.device_ips[ip] = True
         else:
