@@ -30,10 +30,10 @@ class Client:
 
             processes = []
             if config["subscribe"]:
-                processes.append(Process(target=Publisher, args=(config,)))
-            if config["publish"]:
                 processes.append(Process(target=Subscriber, args=(config,)))
-
+            if config["publish"]:
+                processes.append(Process(target=Publisher, args=(config,)))
+            print(processes)
             [p.start() for p in processes]
             [p.join() for p in processes]
 
