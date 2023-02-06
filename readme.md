@@ -54,3 +54,12 @@ Run the unit tests with `pytest tests/`
 The diagram below describes the code's architecture:
 
 ![Diagram](docs/diagram.png "Diagram")
+
+### Implementing new device-wise features
+
+Here is a summary on how new audio features can be implemented:
+1. Create a new function implementing the feature on `feature_manager.py`. The function should have one parameter as input, which is a MxN matrix of signals, where M is the number of channels in the device and N is the size of the signal
+2. Call the function within the `update` function of the `FeatureManager` class, just like it is being done by the `msc` function.
+3. Now move to `plotter.py`, where you should create a method that updates the feature when new data is received. Look at `_update_msc` for a template
+4. Call the method you created on the update method under `Plotter`.
+

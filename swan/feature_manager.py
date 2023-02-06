@@ -17,7 +17,7 @@ class FeatureManager:
     def __init__(self, buffer_size: int):
         self.buffer = AudioBuffer(buffer_size)
 
-    def update_features(self, received_data: dict) -> dict:
+    def update(self, received_data: dict) -> dict:
         """This function is called by the subscriber every time
         new data is received, triggering the recomputation of the features.
 

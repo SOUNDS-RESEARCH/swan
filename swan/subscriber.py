@@ -64,7 +64,7 @@ class Subscriber:
         "The callback for when a PUBLISH message is received from the server."
         payload = pickle.loads(msg.payload)
         
-        features = self.feature_manager.update_features(payload)
+        features = self.feature_manager.update(payload)
         
         self.plotter.update(features)
 
