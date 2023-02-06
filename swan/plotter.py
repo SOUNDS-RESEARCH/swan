@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -28,9 +29,13 @@ class Plotter:
             and the values are dicts with keys being the feature names and
             values being their respective feature values.
         """
-        for device_ip in self.device_ips.keys():
-            for feature_key in self.feature_keys:
-                self.feature_data[feature_key][device_ip] = features[feature_key][device_ip]
+        for feature_key in self.feature_keys:
+            self.feature_data[feature_key] = {}
+            for device_ip in self.device_ips.keys():
+                if device_ip in features and feature_key in features[device_ip]:
+                    self.feature_data[feature_key][device_ip] = features[device_ip][feature_key]
+                else:
+                    self.feature_data[feature_key][device_ip] = np.nan
 
         # self._update_rms(features)
         # Add new features plotting functions here.
