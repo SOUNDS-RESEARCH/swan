@@ -5,10 +5,10 @@ matplotlib.use("TkAgg")
 
 
 class Plotter:
-    device_ips: dict
-    feature_data : dict
     def __init__(self):
         self.feature_keys = ["rms"] # When adding new features, add their keys to this list
+        self.device_ips = {}
+        self.feature_data = {}
         for feature_key in self.feature_keys:
             self.feature_data[feature_key] = {}
         # Currently only creating one plot, which
