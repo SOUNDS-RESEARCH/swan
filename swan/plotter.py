@@ -28,23 +28,20 @@ class Plotter:
             and the values are dicts with keys being the feature names and
             values being their respective feature values.
         """
-        for ip in features.keys():
-            if ip not in self.device_ips:
-                self.update_ips(True, ip)
-        self._update_rms(features)
+        for device_ip, features_ in features.items():
+            for feature_key, value in features_.items():
+                self.feature_data[feature_key][device_ip] = value
+
+        # self._update_rms(features)
         # Add new features plotting functions here.
         # You may use the _update_rms function as a template.
-        if len(self.device_ips) == 0:
-            return
         if len(self.feature_keys) == 1:
             self.axs.clear()
-            # print(self.device_ips)
-            # print(self.feature_data[self.feature_keys[0]].values())
-            self.axs.bar(self.device_ips.keys(), self.feature_data[self.feature_keys[0]].values())
+            self.axs.bar(self.feature_data[feature_key].keys(), self.feature_data[self.feature_keys[0]].values())
         else:
             for id, feature_key in enumerate(self.feature_keys):
                 self.axs[id].clear()
-                self.axs[id].bar(self.device_ips.keys(), self.feature_data[feature_key].values())
+                self.axs[id].bar(self.feature_data[feature_key].keys(), self.feature_data[feature_key].values())
 
         self.fig.canvas.draw()
         # This will run the GUI event
@@ -55,15 +52,7 @@ class Plotter:
     def _update_rms(self, features):
         # device_ips = sorted(list(features.keys()))
         # print(device_ips)
-        for device_ip, features_ in features.items():
-            for feature_key, value in features_.items():
-                self.feature_data[feature_key][device_ip] = value
-
-    def update_ips(self, add, ip):
-        # print("pepe")
-        if add == True:
-            pass
-            # self.device_ips[ip] = True
-        else:
-            if ip in self.device_ips:
-                del self.device_ips[ip]
+        # for device_ip, features_ in features.items():
+        #     for feature_key, value in features_.items():
+        #         self.feature_data[feature_key][device_ip] = value
+        pass
