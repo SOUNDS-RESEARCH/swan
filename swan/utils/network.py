@@ -9,4 +9,4 @@ def get_local_ip():
     if system == "Windows":
         return socket.gethostbyname(socket.gethostname())
     else:
-        return socket.gethostbyname("0")
+        return socket.gethostbyname_ex(socket.getfqdn())[2][0]

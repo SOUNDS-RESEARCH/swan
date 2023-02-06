@@ -41,14 +41,14 @@ class FeatureManager:
 
         # Compute features for all received signals
         for publisher_ip, signal in signals.items():
-            signal = np.stack((signal[::2], signal[1::2]), axis=0)
+            # signal = np.stack((signal[::2], signal[1::2]), axis=0)
             # Pyaudio sends channels interleaved.
             # When working with 2 channels, we must separate them.
             # See https://stackoverflow.com/questions/24974032/reading-realtime-audio-data-into-numpy-array
 
             features = {}
-            features["num_channels"] = signal.shape
-            features["msc"] = msc(signal)
+            features["num_channels"] = signal.shape[0]
+            features["rms"] = rms(signal)
             
             features_per_publisher[publisher_ip] = features
         
@@ -59,7 +59,7 @@ def msc(x):
     """
     Compute the (Mean) Magnitude Square Coherence feature, defined as:
 
-          |CSD(x1, x2)(f)|^2
+         |CSD(x1, x2)(f)|^2
     ------------------------------
     CSD(x1, x1)(f)*CSD(x2, x2)(f)'
 
@@ -80,3 +80,14 @@ def msc(x):
 
     msc_values = (numerator/denominator).real
     return msc_values.mean()
+
+def rms(x):
+    """
+    Compute the Root Mean Square, defined as:
+
+    """
+    # Only use the last frame of data
+    N_SAMPLES_TO_USE = 4096
+    x = x[-N_SAMPLES_TO_USE:]
+
+    return np.sqrt(np.square(x).sum())
