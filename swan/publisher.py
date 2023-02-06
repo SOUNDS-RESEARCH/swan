@@ -6,7 +6,7 @@ import time
 from omegaconf.dictconfig import DictConfig
 
 from swan.utils.audio import create_audio_recorder
-from swan.utils.network import get_local_ip
+from swan.utils.network import get_ip_address
 
 
 class Publisher:
@@ -22,7 +22,7 @@ class Publisher:
         """
 
         self.config = config
-        self.publisher_ip = get_local_ip()
+        self.publisher_ip = get_ip_address(config["network"]["broker_address"])
 
         # 1. Connect to a MQTT server to publish signals at
         broker_address = config["network"]["broker_address"]
