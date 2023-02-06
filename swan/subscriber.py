@@ -64,6 +64,10 @@ class Subscriber:
     def on_message(self, client, userdata, msg):
         "The callback for when a PUBLISH message is received from the server."
         payload = pickle.loads(msg.payload)
-        features = self.feature_manager.update_features(payload)
-        self.plotter.update_data(features)
-        self.database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
+        if payload["msg_type"] == "con":
+            if not payload["connect"] and payload["publisher_ip"] in self.plotter.device_ips:
+                del self.plotter.device_ips[payload["publisher_ip"]]
+        if payload["msg_type"] == "data":
+            features = self.feature_manager.update_features(payload)
+            self.plotter.update_data(features)
+            self.database.insert(payload["frame"], payload["timestamp"], payload["publisher_ip"])
