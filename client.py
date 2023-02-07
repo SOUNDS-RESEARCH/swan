@@ -6,6 +6,8 @@ from omegaconf.dictconfig import DictConfig
 from swan.subscriber import Subscriber
 from swan.publisher import Publisher
 
+from swan.utils.audio import get_audio_devices
+
 
 class Client:
     """This class abstracts the main functionality performed by a device.
@@ -43,6 +45,9 @@ class Client:
 
 @hydra.main(config_path="config", config_name="config")
 def main(config: DictConfig):
+    print("###########################")
+    get_audio_devices()
+    config["audio"]["device_id"] = int(input("Enter Input Device id: "))
     Client(config)
 
 

@@ -1,6 +1,7 @@
 audio:
   # Recording settings
   format: pyaudio.paInt16
+  device_id: 0
   sample_size_in_bytes: 2
   channels: 1
   rate: 44100
