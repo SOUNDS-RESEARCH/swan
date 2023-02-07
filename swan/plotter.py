@@ -24,11 +24,14 @@ class Plotter:
             and the values are dicts with keys being the feature names and
             values being their respective feature values.
         """
-        
         self._update_msc(features)
         # Add new features plotting functions here.
         # You may use the _update_msc function as a template.
+        self._update_vad(features)
+        # Add new features plotting functions here.
+        # You may use the _update_msc function as a template.
 
+        self.fig.tight_layout()
         self.fig.canvas.draw()
         # This will run the GUI event
         # loop until all UI events
@@ -45,3 +48,16 @@ class Plotter:
         self.axs[0].clear()
         self.axs[0].set_title("Magnitude-squared coherence of each device")
         self.axs[0].bar(device_ips, msc)
+        self.axs[0].set_ylim([0, 1])
+
+    def _update_vad(self, features):
+        device_ips = sorted(list(features.keys()))
+        vad = [
+            features[device_ip]["vad"]
+            for device_ip in device_ips
+        ]
+        
+        self.axs[1].clear()
+        self.axs[1].set_title("Voice activity probability for each device")
+        self.axs[1].bar(device_ips, vad)
+        self.axs[1].set_ylim([0, 1])

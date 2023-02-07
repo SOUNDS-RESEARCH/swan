@@ -1,9 +1,10 @@
 import numpy as np
 
+from omegaconf.dictconfig import DictConfig
 from scipy.signal import csd
 
-
 from swan.utils.audio import AudioBuffer
+from swan.utils.silero_vad import SileroVAD
 
 
 class FeatureManager:
@@ -14,8 +15,11 @@ class FeatureManager:
     more than a single audio frame.
     """
 
-    def __init__(self, buffer_size: int):
-        self.buffer = AudioBuffer(buffer_size)
+    def __init__(self, config: DictConfig):
+        self.buffer = AudioBuffer(
+            config["audio"]["feature_buffer_size_in_bytes"])
+
+        self.vad = SileroVAD(sr=config["audio"]["sr"])
 
     def update(self, received_data: dict) -> dict:
         """This function is called by the subscriber every time
@@ -40,7 +44,7 @@ class FeatureManager:
         features_per_publisher = {}
 
         # Compute features for all received signals
-        for publisher_ip, signal in signals.items():
+        for device_name, signal in signals.items():
             signal = np.stack((signal[::2], signal[1::2]), axis=0)
             # Pyaudio sends channels interleaved.
             # When working with 2 channels, we must separate them.
@@ -49,8 +53,9 @@ class FeatureManager:
             features = {}
             features["num_channels"] = signal.shape
             features["msc"] = msc(signal)
+            features["vad"] = self.vad.get_speech_probability_for_frame(signal)
             
-            features_per_publisher[publisher_ip] = features
+            features_per_publisher[device_name] = features
         
         return features_per_publisher
 

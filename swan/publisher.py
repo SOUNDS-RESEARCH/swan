@@ -1,3 +1,4 @@
+import os
 import paho.mqtt.client as mqtt
 import pickle
 import pyaudio
@@ -24,6 +25,11 @@ class Publisher:
         self.config = config
         self.publisher_ip = get_local_ip()
 
+        if config["device_name"] is not None:
+            self.device_name = config["device_name"]
+        else:
+            self.device_name = os.environ.get('USER', os.environ.get('USERNAME'))
+
         # 1. Connect to a MQTT server to publish signals at
         broker_address = config["network"]["broker_address"]
         self.mqtt_client = mqtt.Client()
@@ -42,16 +48,17 @@ class Publisher:
             self.mqtt_client.loop_forever()
         except KeyboardInterrupt:
             print("Stopping publisher...")
-            
 
     def publish(self, in_data, frame_count, time_info, status):
         """This function is called every time a new audio frame is received.
         It proceeds to send the frame to all clients connected to this node
         """
+        
         payload = {
             "frame": in_data,
             "timestamp": time.time(),
-            "publisher_ip": self.publisher_ip
+            "publisher_ip": self.publisher_ip,
+            "device_name": self.device_name
         }
 
         self.mqtt_client.publish(

@@ -4,3 +4,6 @@ defaults:
   - audio
   - network
   - _self_
+
+device_name: Eric's Macbook # Change this variable to your preferred display name.
+                  # If it is not set, the computer's username is used.

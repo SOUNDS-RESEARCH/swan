@@ -29,7 +29,7 @@ class Subscriber:
         self.config = config
 
         self.database = Database(config)
-        self.feature_manager = FeatureManager(config["audio"]["feature_buffer_size_in_bytes"])
+        self.feature_manager = FeatureManager(config)
         self.plotter = Plotter()
 
         self.client = mqtt.Client()
