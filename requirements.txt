@@ -4,3 +4,5 @@ paho-mqtt
 pandas
 scipy
 matplotlib
+torch
+torchaudio

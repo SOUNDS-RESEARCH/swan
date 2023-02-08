@@ -7,7 +7,7 @@ import time
 from omegaconf.dictconfig import DictConfig
 
 from swan.utils.audio import create_audio_recorder
-from swan.utils.network import get_local_ip
+from swan.utils.network import get_network_ip
 
 
 class Publisher:
@@ -23,7 +23,7 @@ class Publisher:
         """
 
         self.config = config
-        self.publisher_ip = get_local_ip()
+        self.publisher_ip = get_network_ip(config["network"]["broker_address"])
 
         if config["device_name"] is not None:
             self.device_name = config["device_name"]
@@ -36,6 +36,13 @@ class Publisher:
         self.mqtt_client.connect(broker_address,
                                  config["network"]["broker_port"],
                                  config["network"]["broker_keepalive_in_secs"])
+        payload = {
+            "msg_type":"con",
+            "connect": True,
+            "timestamp": time.time(),
+            "publisher_ip": self.publisher_ip
+        }
+        self.mqtt_client.publish(self.config["network"]["topic"], pickle.dumps(payload))
         print(f"Publishing microphone signals at {broker_address}...")
 
         # 2. Create an audio recorder which calls the "publish" function
@@ -47,6 +54,13 @@ class Publisher:
         try:
             self.mqtt_client.loop_forever()
         except KeyboardInterrupt:
+            payload = {
+                "msg_type":"con",
+                "connect": False,
+                "timestamp": time.time(),
+                "publisher_ip": self.publisher_ip
+            }
+            self.mqtt_client.publish(self.config["network"]["topic"], pickle.dumps(payload))
             print("Stopping publisher...")
 
     def publish(self, in_data, frame_count, time_info, status):
@@ -55,6 +69,7 @@ class Publisher:
         """
         
         payload = {
+            "msg_type":"data",
             "frame": in_data,
             "timestamp": time.time(),
             "publisher_ip": self.publisher_ip,

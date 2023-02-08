@@ -52,9 +52,20 @@ def create_audio_recorder(stream_callback, audio_config):
         format=FORMAT,
         channels=audio_config["channels"],
         rate=audio_config["sr"],
+        input_device_index=audio_config["device_id"],
         input=True,
         frames_per_buffer=audio_config["frame_size_in_bytes"],
         stream_callback=stream_callback
     )
 
     return recorder
+
+def get_audio_devices():
+    p = pyaudio.PyAudio()
+    info = p.get_host_api_info_by_index(0)
+    numdevices = info.get('deviceCount')
+
+    for i in range(0, numdevices):
+        dev_input_channels = p.get_device_info_by_host_api_device_index(0, i).get('maxInputChannels')
+        if (dev_input_channels) > 0:
+            print("Input Device id :", i, " - ", p.get_device_info_by_host_api_device_index(0, i).get('name'), " - ", dev_input_channels, " channel(s)")
