@@ -40,7 +40,8 @@ class Publisher:
             "msg_type":"con",
             "connect": True,
             "timestamp": time.time(),
-            "publisher_ip": self.publisher_ip
+            "publisher_ip": self.publisher_ip,
+            "device_name": self.device_name
         }
         self.mqtt_client.publish(self.config["network"]["topic"], pickle.dumps(payload))
         print(f"Publishing microphone signals at {broker_address}...")
