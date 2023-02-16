@@ -11,7 +11,7 @@ class Plotter:
         self.delta_t = 0.05
         self.last_update = time.time()
 
-        self.feature_keys = ["vad", "rms"] # When adding new features, add their keys to this list
+        self.feature_keys = ["vad", "rms", "snr"] # When adding new features, add their keys to this list
         self.device_names = {}
         self.feature_data = {}
         for feature_key in self.feature_keys:
@@ -51,6 +51,7 @@ class Plotter:
         # self._update_msc(features)
         self._update_vad(features)
         self._update_rms(features)
+        self._update_snr(features)
         # Add new features plotting functions here.
         # You may use the _update_msc function as a template.
 
@@ -83,7 +84,28 @@ class Plotter:
         
         self.axs[feature_key].legend()
 
-        # update plots
+    def _init_snr(self):
+        self.axs["snr"].set_title("SNR of each device")
+
+    def _update_snr(self, features):
+        SNR_FRAMES = 128
+        feature_key = "snr"
+        # update local data
+        # maybe this can be abstracted, but it's very feature-dependent
+        # self.feature_data[feature_key] = {}
+        self.axs[feature_key].clear()
+        for device_ip in self.device_names.keys():
+            if device_ip not in self.feature_data[feature_key]:
+                self.feature_data[feature_key][device_ip] = [0] * SNR_FRAMES
+            if device_ip in features and feature_key in features[device_ip]:  # this might be slow, who knows, but it's just plotting, does it block the thread?
+                self.feature_data[feature_key][device_ip].append(features[device_ip][feature_key])
+                self.feature_data[feature_key][device_ip].pop(0)
+            nf = features[device_ip]["noise_floor"]
+            self.axs[feature_key].plot(self.feature_data[feature_key][device_ip], label=device_ip+"-NE:{:.3f}".format(nf), c='red')
+
+        self.axs[feature_key].legend()
+
+    # update plots
 
     def update_device_names(self, add, ip):
         if add == True:

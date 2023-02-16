@@ -9,3 +9,6 @@ audio:
   feature_buffer_size_in_bytes: 8192
   database_filename: "recordings.db"
   stats_filename: "stats.csv"
+
+vad:
+  vad_decision_threshold: 0.1 # Threshold to identify noise frames
