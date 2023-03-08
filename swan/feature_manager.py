@@ -21,6 +21,8 @@ class FeatureManager:
             config["audio"]["feature_buffer_size_in_bytes"])
 
         self.vad = SileroVAD(sr=config["audio"]["sr"])
+        self.noise_floor = float()
+        self.vad_thr = config["vad"]["vad_decision_threshold"]
 
     def update(self, received_data: dict) -> dict:
         """This function is called by the subscriber every time
@@ -57,7 +59,8 @@ class FeatureManager:
             # features["msc"] = msc(signal)
             features["vad"] = self.vad.get_speech_probability_for_frame(signal)
             features["rms"] = rms(signal)
-
+            self.noise_floor, features["snr"] = snr(signal, features["vad"], self.vad_thr, self.noise_floor)
+            features["noise_floor"] = self.noise_floor
             features_per_publisher[device_name] = features
         
         return features_per_publisher
@@ -100,3 +103,25 @@ def rms(x):
     x = x[-N_SAMPLES_TO_USE:].astype(np.float32)/32767.0
 
     return np.sqrt(np.square(x).sum())
+
+def snr(x, vad_scores, thr, n_floor):
+    """
+    Compute the Root Mean Square, defined as:
+
+    """
+    # Only use the last frame of data
+    N_SAMPLES_TO_USE = 4096
+
+    def energy():
+        return np.square(x[-N_SAMPLES_TO_USE:].astype(np.float32)/32767.0).sum()
+    def update_nf():
+        return (n_floor + energy()) / 2
+
+    # Select unvoiced frames and update the noise floor
+    if vad_scores < thr: n_floor = update_nf()
+
+    # Compute SNR
+    en = energy()
+    # print("n_floor:{} --- en:{}\n".format(n_floor,en))
+
+    return n_floor, 10*np.log10(en/n_floor)

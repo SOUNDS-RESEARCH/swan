@@ -63,3 +63,15 @@ Here is a summary on how new audio features can be implemented:
 3. Now move to `plotter.py`, where you should create a method that updates the feature when new data is received. Look at `_update_msc` for a template
 4. Call the method you created on the update method under `Plotter`.
 
+
+
+
+
+    def update_nf(x):
+        N_SAMPLES_TO_USE = 4096
+        x = x[-N_SAMPLES_TO_USE:].astype(np.float32) / 32767.0
+        return (np.square(x).sum() + noise_floor) / 2
+
+    # Update noise floor only for low VAD scores (else we consider speech: not ideal but lets try)
+    #        if vad_output < thr:
+    noise_floor = update_nf(signal)
