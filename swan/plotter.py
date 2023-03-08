@@ -5,6 +5,8 @@ import time
 
 matplotlib.use("TkAgg")
 
+COLORMAP = plt.get_cmap("Dark2")
+
 
 class Plotter:
     def __init__(self):
@@ -14,6 +16,8 @@ class Plotter:
         self.feature_keys = ["vad", "rms", "snr"] # When adding new features, add their keys to this list
         self.device_names = {}
         self.feature_data = {}
+        self.device_colors = {}
+        
         for feature_key in self.feature_keys:
             self.feature_data[feature_key] = {}
 
@@ -80,7 +84,7 @@ class Plotter:
                 self.feature_data[feature_key][device_ip].append(features[device_ip][feature_key])
                 self.feature_data[feature_key][device_ip].pop(0)
 
-            self.axs[feature_key].plot(self.feature_data[feature_key][device_ip], label=device_ip)
+            self.axs[feature_key].plot(self.feature_data[feature_key][device_ip], label=device_ip, color=self.device_colors[device_ip])
         
         self.axs[feature_key].legend()
 
@@ -95,13 +99,16 @@ class Plotter:
         # self.feature_data[feature_key] = {}
         self.axs[feature_key].clear()
         for device_ip in self.device_names.keys():
+            if device_ip not in features: # TODO: Remove this I guess
+                continue
             if device_ip not in self.feature_data[feature_key]:
                 self.feature_data[feature_key][device_ip] = [0] * SNR_FRAMES
             if device_ip in features and feature_key in features[device_ip]:  # this might be slow, who knows, but it's just plotting, does it block the thread?
                 self.feature_data[feature_key][device_ip].append(features[device_ip][feature_key])
                 self.feature_data[feature_key][device_ip].pop(0)
             nf = features[device_ip]["noise_floor"]
-            self.axs[feature_key].plot(self.feature_data[feature_key][device_ip], label=device_ip+"-NE:{:.3f}".format(nf), c='red')
+            self.axs[feature_key].plot(self.feature_data[feature_key][device_ip], label=device_ip+"-NE:{:.3f}".format(nf),
+                                       color=self.device_colors[device_ip])
 
         self.axs[feature_key].legend()
 
@@ -113,6 +120,9 @@ class Plotter:
         else:
             if ip in self.device_names:
                 del self.device_names[ip]
+        
+        if ip not in self.device_colors:
+            self.device_colors[ip] = COLORMAP(len(self.device_colors))
 
     def _update_vad(self, features):
         feature_key = "vad"
@@ -121,10 +131,14 @@ class Plotter:
             features[device_name][feature_key]
             for device_name in device_names
         ]
+        colors = [
+            self.device_colors[device_name]
+            for device_name in device_names
+        ]
         
         self.axs[feature_key].clear()
         self.axs[feature_key].set_title("Voice activity probability for each device")
-        self.axs[feature_key].bar(device_names, vad)
+        self.axs[feature_key].bar(device_names, vad, color=colors)
         self.axs[feature_key].set_ylim([0, 1])
 
     def _update_msc(self, features):

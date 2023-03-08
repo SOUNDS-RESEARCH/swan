@@ -1,5 +1,5 @@
 network:
   broker_port: 1883
-  broker_address: "localhost"
+  broker_address: "192.168.50.106"
   broker_keepalive_in_secs: 60
   topic: "topic/streams"

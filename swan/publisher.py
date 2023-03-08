@@ -37,7 +37,7 @@ class Publisher:
                                  config["network"]["broker_port"],
                                  config["network"]["broker_keepalive_in_secs"])
         payload = {
-            "msg_type":"con",
+            "msg_type": "con",
             "connect": True,
             "timestamp": time.time(),
             "publisher_ip": self.publisher_ip,
@@ -59,7 +59,8 @@ class Publisher:
                 "msg_type":"con",
                 "connect": False,
                 "timestamp": time.time(),
-                "publisher_ip": self.publisher_ip
+                "publisher_ip": self.publisher_ip,
+                "device_name": self.device_name
             }
             self.mqtt_client.publish(self.config["network"]["topic"], pickle.dumps(payload))
             print("Stopping publisher...")
