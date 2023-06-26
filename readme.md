@@ -27,7 +27,7 @@ A second key concept in the MQTT protocol is the publisher-subscriber paradigm. 
 ### Installing the server
 At least one of the devices in the network must be running an MQTT server/broker, which will receive and distribute the microphone signals from all devices. Installation steps for the [Mosquitto](https://mosquitto.org/) broker are detailed below:
 
-1. MQTT usually port 1883 for communicating. This port must be therefore opened. On Windows, this is achieved by creating an "Inbound Port Rule" and an "Outbound Port Rule" in the firewall settings. See [https://www.youtube.com/watch?v=IDMMzxDV4PQ&ab_channel=delightnet](video) for a quick walkthrough.
+1. MQTT uses port 1883 as default for communicating. This port must be therefore opened. On Windows, this is achieved by creating an "Inbound Port Rule" and an "Outbound Port Rule" in the firewall settings. See [https://www.youtube.com/watch?v=IDMMzxDV4PQ&ab_channel=delightnet](video) for a quick walkthrough.
 2. Install the [Mosquitto](https://mosquitto.org/) MQTT message broker using the corresponding executable for your machine. 
 3. Mosquitto is initially configured not to allow external connections. Before starting the server, we must change this behaviour. In the directory where you installed Mosquitto (in Windows, it is usually C:\Program Files\mosquitto), add the following lines to the file `mosquitto.conf`:
 ```
